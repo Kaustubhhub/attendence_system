@@ -30,19 +30,6 @@ export const generateJwtToken = async (data: loginType) => {
     return token;
 }
 
-// export const compareJwtToken = async (token: string) => {
-//     if (!JWTSECRET) {
-//         throw new Error("JWT secret not loaded")
-//     }
-
-//     try {
-//         const decoded = jwt.verify(token, JWTSECRET);
-//         return decoded;
-//     } catch (error) {
-//         throw new Error("Invalid or expired token");
-//     }
-// }
-
 export const compareJwtToken = async (token: string): Promise<MyJwtPayload> => {
     if (!JWTSECRET) {
         throw new Error("JWT secret not loaded");

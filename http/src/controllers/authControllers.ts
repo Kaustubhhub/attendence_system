@@ -4,6 +4,7 @@ import { getDB } from "../db/mongoClient.js";
 import type { User } from "../models/user.js";
 import { compareHash, hashPassword } from "../utils/bcrypt/index.js";
 import { compareJwtToken, generateJwtToken } from "../utils/jwt/index.js";
+import { middleware } from "../middleware/middleware.js";
 
 export const signUpController = async (req: Request, res: Response) => {
     try {
@@ -89,25 +90,31 @@ export const signInController = async (req: Request, res: Response) => {
 
 export const meController = async (req: Request, res: Response) => {
     try {
-        const token = req.body.token;
-
-        const user = await compareJwtToken(token);
-
+        const email = req.body.email;
         const db = getDB();
         const users = db.collection("users");
+        const user = await users.findOne({
+            "email": email
+        })
 
-        const existingUser = await users.findOne({ email: user.email });
-        let dataToSend = {
-            "_id": existingUser?._id,
-            "name": existingUser?.name,
-            "email": existingUser?.email,
-            "role": user?.role
+        if (!user) {
+            return res.json({
+                "success": false,
+                "error": "User Not found"
+            })
         }
-        return res.json({
-            success: true,
-            data: dataToSend
-        });
 
+        const dataToSend = {
+            "email": user.email,
+            "role": user.role,
+            "name": user.name,
+            "_id": user._id
+        }
+
+        res.json({
+            "success": true,
+            "data": dataToSend
+        })
     } catch (error) {
         return res.json({
             success: false,

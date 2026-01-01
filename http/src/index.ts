@@ -14,7 +14,8 @@ app.get("/health", (req, res) => {
     })
 })
 
-app.use("/api/auth", authRouter);
+app.use("/auth", authRouter);
+app.use("/class")
 
 const startServer = async () => {
     try {
